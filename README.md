@@ -4,7 +4,7 @@ A set of simple R scripts for simple R tasks.
 
 ##Usage:
 
-* heatmap.R - makes heatmaps based on tab delimited files where the columns are the consitions and the rows, genes.
+* clusters_heatmap.R - makes heatmaps based on tab delimited files where the columns are the consitions and the rows, genes.
 * enrichment_analysis.R - Enrichment Test by The Hypergeometric Distribution and FDR correction
 * venns_2condicoes.R - vens plots
 * gene_exon.R - plot intron/exon organization using genomes from biomart (default: vitis vinifera)
