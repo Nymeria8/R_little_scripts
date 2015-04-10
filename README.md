@@ -13,6 +13,7 @@ A set of simple R scripts for simple R tasks.
 * DESEQ2.R - differential expression analysis with DESEQ2
 * PCAS.R - Principal component analysis given a table
 * testeplot.R - Partitional clustering over time using Mfuzz
+* ANOVA_with_FDR.R - one way ANOVA calculation based on a table with fdr
 
 ##Dependencies:
 Dependencies described on each of the scripts.
