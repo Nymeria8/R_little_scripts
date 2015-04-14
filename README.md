@@ -14,6 +14,8 @@ A set of simple R scripts for simple R tasks.
 * PCAS.R - Principal component analysis given a table
 * testeplot.R - Partitional clustering over time using Mfuzz
 * ANOVA_with_FDR.R - one way ANOVA calculation based on a table with fdr
+* vcf2PCA.R - makes a PCA plot using a snp file (vcf)
+* ibd_ml.R - isolation by distance by maximum likelihood and ibs analisis (with plots)
 
 ##Dependencies:
 Dependencies described on each of the scripts.

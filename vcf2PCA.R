@@ -1,5 +1,5 @@
-#PCA snps e cenas (a descobrir)
-library(gdsfmt)
+#VCF to PCA
+
 library ("SNPRelate")
 
 #input
@@ -22,18 +22,18 @@ pca<-snpgdsPCA(genofile)
 pc.percent<-pca$varprop*100
 head(pc.percent)
 
-
+#get sample ids
 sample.id<-read.gdsn(index.gdsn(genofile,"sample.id"))
 
-
+#data frame of eigenvectors
 tab<-data.frame(sample.id= pca$sample.id,
                 pop=factor(pop_code)[match(pca$sample.id, sample.id)],
-                EV1= pca$eigenvect[,2],# first eignvector
-                EV2= pca$eigenvect[,3],# the second eigenvector
+                EV1= pca$eigenvect[,1],# first eignvector (can be changed)
+                EV2= pca$eigenvect[,2],# the second eigenvector (can be changed)
                 stringsAsFactors=FALSE)
 
-plot(tab$EV2, tab$EV1,  col=as.integer(tab$pop), xlab="eigenvector 2",ylab="eigenvector 1", pch=c(0,1,2,3,4,5))
-legend("topleft", legend=levels(tab$pop), pch=c(0,1,2,3,4,5), col=1:nlevels(tab$pop))
+par(mar=c(5.1, 4.1, 4.1, 8.1), xpd=TRUE)#creates space outside plot area
+plot(tab$EV2, tab$EV1,  col=as.integer(tab$pop), xlab="eigenvector 2",ylab="eigenvector 1", pch=as.integer(tab$pop))
+legend("topright", legend=levels(tab$pop),inset=c(-0.15,0), pch=1:nlevels(tab$pop), col=1:nlevels(tab$pop))#inset forces legend outside area
 
-cbind(sample.id, pop_code)
-
+snpgdsClose(genofile)
