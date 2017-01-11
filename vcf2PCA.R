@@ -2,10 +2,13 @@
 
 library ("SNPRelate")
 
+args <- commandArgs(trailingOnly = TRUE)
+
 #Define inputs:
-vcf.fn <- "~/Desktop/sequenom/VCF/Qsuber_Sequenom.vcf"
+vcf.fn <- args[1] # "~/Desktop/sequenom/VCF/Qsuber_Sequenom.vcf"
 gds.fn <- "/tmp/file.gds"
-pops.fn <- "~/Desktop/sequenom/VCF/pop_names_sorted.txt"
+pops.fn <- args[2] # "~/Desktop/sequenom/VCF/pop_names_sorted.txt"
+output_plot <- args[3] # "~/Desktop/sequenom/PCA/Qsuber_sequenom_PCA.svg"
 
 #input
 snpgdsVCF2GDS(vcf.fn, gds.fn, method="copy.num.of.ref") # import to class. use method= biallelic.only for biallelic snps
@@ -18,6 +21,7 @@ genofile<-snpgdsOpen(gds.fn)
 
 #import population names
 pop_code <- scan(pops.fn, what=character())
+pop_code = gsub("_", " ", pop_code) # Replace any "_" with " ".
 
 #PCA
 pca<-snpgdsPCA(genofile)
@@ -37,12 +41,21 @@ tab<-data.frame(sample.id= pca$sample.id,
                 stringsAsFactors=FALSE)
 
 par(mar=c(5.1, 4.1, 4.1, 8.1), xpd=TRUE) # Creates space outside plot area
+
+svg(filename=output_plot)
+
+par(xpd=NA)
+mar.default <- c(5,4,4,2) + 0.1
+par(mar = mar.default + c(0, 0, 0, 9))
+
 plot(tab$EV1, tab$EV2, col=as.integer(tab$pop),
      xlab="Eigenvector 1", ylab="Eigenvector 2",
      pch=as.integer(tab$pop))
 
+
 legend("topright", legend=levels(tab$pop),
-       inset=c(-0.15,0),  # Inset forces legend outside area
+       inset=c(-0.45,0),  # Inset forces legend outside area
        pch=1:nlevels(tab$pop), col=1:nlevels(tab$pop))
 
+dev.off()
 snpgdsClose(genofile)
