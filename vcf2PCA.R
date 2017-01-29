@@ -2,18 +2,26 @@
 
 library ("SNPRelate")
 
+args <- commandArgs(trailingOnly = TRUE)
+
+#Define inputs:
+vcf.fn <- args[1] # "~/Desktop/sequenom/VCF/Qsuber_Sequenom.vcf"
+gds.fn <- "/tmp/file.gds"
+pops.fn <- args[2] # "~/Desktop/sequenom/VCF/pop_names_sorted.txt"
+output_plot <- args[3] # "~/Desktop/sequenom/PCA/Qsuber_sequenom_PCA.svg"
+
 #input
-vcf.fn<-"~/Desktop/Qsuber_indiv90_miss80_maf06.recode.vcf"#load the data
-snpgdsVCF2GDS(vcf.fn,"test.gds",method="copy.num.of.ref")#import to class. use method= biallelic.only for biallelic snps
+snpgdsVCF2GDS(vcf.fn, gds.fn, method="copy.num.of.ref") # import to class. use method= biallelic.only for biallelic snps
 
 #summary of the vcf imported
-snpgdsSummary("test.gds")
+snpgdsSummary(gds.fn)
 
 #open the translated vcf imported
-genofile<-snpgdsOpen("test.gds")
+genofile<-snpgdsOpen(gds.fn)
 
 #import population names
-pop_code <- scan("~/Desktop/pops.txt", what=character())
+pop_code <- scan(pops.fn, what=character())
+pop_code = gsub("_", " ", pop_code) # Replace any "_" with " ".
 
 #PCA
 pca<-snpgdsPCA(genofile)
@@ -28,12 +36,26 @@ sample.id<-read.gdsn(index.gdsn(genofile,"sample.id"))
 #data frame of eigenvectors
 tab<-data.frame(sample.id= pca$sample.id,
                 pop=factor(pop_code)[match(pca$sample.id, sample.id)],
-                EV1= pca$eigenvect[,1],# first eignvector (can be changed)
-                EV2= pca$eigenvect[,2],# the second eigenvector (can be changed)
+                EV1=pca$eigenvect[,1], # first eignvector (can be changed)
+                EV2=pca$eigenvect[,2], # the second eigenvector (can be changed)
                 stringsAsFactors=FALSE)
 
-par(mar=c(5.1, 4.1, 4.1, 8.1), xpd=TRUE)#creates space outside plot area
-plot(tab$EV2, tab$EV1,  col=as.integer(tab$pop), xlab="eigenvector 2",ylab="eigenvector 1", pch=as.integer(tab$pop))
-legend("topright", legend=levels(tab$pop),inset=c(-0.15,0), pch=1:nlevels(tab$pop), col=1:nlevels(tab$pop))#inset forces legend outside area
+par(mar=c(5.1, 4.1, 4.1, 8.1), xpd=TRUE) # Creates space outside plot area
 
+svg(filename=output_plot)
+
+par(xpd=NA)
+mar.default <- c(5,4,4,2) + 0.1
+par(mar = mar.default + c(0, 0, 0, 9))
+
+plot(tab$EV1, tab$EV2, col=as.integer(tab$pop),
+     xlab="Eigenvector 1", ylab="Eigenvector 2",
+     pch=as.integer(tab$pop))
+
+
+legend("topright", legend=levels(tab$pop),
+       inset=c(-0.45,0),  # Inset forces legend outside area
+       pch=1:nlevels(tab$pop), col=1:nlevels(tab$pop))
+
+dev.off()
 snpgdsClose(genofile)
